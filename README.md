@@ -1,6 +1,6 @@
 # Pokédex
 
-A simple Pokédex built with Angular.js
+A simple Pokédex built with Angular.js (CURSO DE PLATZI ANGULARJS 2015)
 
 ## LEGAL
 
