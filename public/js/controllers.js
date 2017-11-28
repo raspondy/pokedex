@@ -1,7 +1,7 @@
 (function (_) {
 
   angular.module('pokedex.controllers', [])
-    .controller('PokedexController', ['$rootScope', '$scope', '$routeParams', 'pokemonService', function ($rootScope, $scope, $routeParams, pokemonService) {
+    .controller('PokedexController', ['$rootScope', '$scope', '$routeParams', 'Pokemon', function ($rootScope, $scope, $routeParams, Pokemon) {
       var type = $routeParams.type;
       var pokemons = [];
 
@@ -9,30 +9,27 @@
 
       if (type) {
         $scope.type = type;
-
-        pokemonService.byType(type).then(function (data) {
-          $scope.pokemons = pokemons = data;
+        $scope.pokemons = pokemons = Pokemon.query({ type: type.toLowerCase() }, function (data) {
           $scope.groupped = partition(data, 4);
         });
       } else {
-        pokemonService.all().then(function (data) {
-          $scope.pokemons = pokemons = data;
+        $scope.pokemons = pokemons = Pokemon.query(function (data) {
           $scope.groupped = partition(data, 4);
         });
       }
 
       $scope.search = function () {
-          var result = pokemons;
-          if($scope.searchTerm) {
-              result = pokemons.filter(function (pokemon) {
-                  var name = pokemon && pokemon.name || "";
+        var result = pokemons;
+        if ($scope.searchTerm) {
+          result = pokemons.filter(function (pokemon) {
+            var name = pokemon && pokemon.name || "";
 
-                  return name.toLowerCase().indexOf($scope.searchTerm.toLowerCase()) !== -1;
-              })
-          }
+            return name.toLowerCase().indexOf($scope.searchTerm.toLowerCase()) !== -1;
+          });
+        }
 
-          $scope.pokemons = result;
-          $scope.groupped = partition(result, 4);
+        $scope.pokemons = result;
+        $scope.groupped = partition(result, 4);
       };
 
       function partition(data, n) {
@@ -43,14 +40,14 @@
 
     }])
 
-    .controller('PokemonController', ['$rootScope', '$scope', '$routeParams', 'pokemonService', function ($rootScope, $scope, $routeParams, pokemonService) {
+    .controller('PokemonController', ['$rootScope', '$scope', '$routeParams', 'Pokemon', function ($rootScope, $scope, $routeParams, Pokemon) {
       var name = $routeParams.name;
 
-      pokemonService.byName(name)
-      .then(function (data) {
-        $rootScope.title = data.name;
-        $scope.pokemon = data;
+      Pokemon.get({ name: name }, function (pokemon) {
+        $rootScope.title = pokemon.name;
+        $scope.pokemon = pokemon;
       });
+
     }])
 
     .controller('TabsController', ['$scope', function ($scope) {
@@ -59,9 +56,10 @@
       $scope.selectTab = function (tab) {
         $scope.tab = tab;
       };
+
       $scope.isActive = function (tab) {
         return tab === $scope.tab;
-      }
+      };
     }]);
 
 })(_);
