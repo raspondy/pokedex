@@ -15,7 +15,7 @@
 
     .filter('imageify', ['$filter', function ($filter) {
       return function (input) {
-        var url = "img/pokemons/" + $filter('normalize')(input) + ".jpeg";
+        var url = "img/pokemons/" + $filter('normalize')(input) + ".jpg";
         return url;
       };
     }]);
